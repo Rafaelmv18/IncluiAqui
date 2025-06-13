@@ -5,9 +5,10 @@ type Props = TouchableOpacityProps & {
   title: string;
   style?: ViewStyle;
   titleStyle?: TextStyle;
+  pages?: string;
 };
 
-export function Button({ title, style, titleStyle, ...rest }: Props) {
+export function Button({ title, style, titleStyle, pages, ...rest }: Props) {
   return (
     <TouchableOpacity activeOpacity={0.8} style={[styles.button, style]} {...rest}>
       {/* PONTO CRÍTICO: titleStyle DEVE VIR POR ÚLTIMO */}

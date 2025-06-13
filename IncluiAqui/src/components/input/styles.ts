@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     input: {
-        width: '100%',
+        width: 266,
         height: 48,
         borderRadius: 30,
         borderWidth: 1,
@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
         paddingLeft: 30,
+        
     },
     icon: {
         position: 'absolute', // Posiciona o ícone de forma absoluta dentro do container
@@ -18,5 +19,11 @@ export const styles = StyleSheet.create({
         top: 11,
         color: '#E57A00'
     },
-    
+
+    // error: {
+    //     fontSize: 12,
+    //     color: "#DC1637",
+    //     marginLeft: 10,
+        
+    // }
 })

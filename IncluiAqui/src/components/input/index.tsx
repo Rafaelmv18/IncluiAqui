@@ -4,10 +4,12 @@ import { Feather } from "@expo/vector-icons";
 import { styles } from "./styles";
 
 type Props = TextInputProps & {
+  // error: string
   icon?: keyof typeof Feather.glyphMap;
+  inputStyle?: object; 
 };
-
-export function Input({ icon, ...rest }: Props) {
+// error = ''
+export function Input({ icon, inputStyle, ...rest }: Props) {
   return (
     <View>
       <Feather  
@@ -18,11 +20,18 @@ export function Input({ icon, ...rest }: Props) {
       />
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, inputStyle]}
         placeholderTextColor="#666"
         {...rest}
         
       /> 
+
+      {/* {
+        error.length > 0 &&
+        <Text style={styles.error}>
+        {error}
+      </Text>
+      } */}
     </View>
   );
 }
