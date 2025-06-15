@@ -7,16 +7,17 @@ type Props = TextInputProps & {
   // error: string
   icon?: keyof typeof Feather.glyphMap;
   inputStyle?: object; 
+  iconStyle?: object; 
 };
 // error = ''
-export function Input({ icon, inputStyle, ...rest }: Props) {
+export function Input({ icon, inputStyle, iconStyle, ...rest }: Props) {
   return (
     <View>
       <Feather  
         name={icon}
         size={24}
         color="#666"
-        style={styles.icon}
+        style={[styles.icon, iconStyle]}
       />
 
       <TextInput
