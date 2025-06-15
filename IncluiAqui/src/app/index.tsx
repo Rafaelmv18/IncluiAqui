@@ -16,6 +16,11 @@ export default function Dashboard(){
             icon="map-pin"
             inputStyle={{ backgroundColor: '#fff', margin: 16 }}
           />
+                    <Input
+            placeholder="Buscar local"
+            icon="map-pin"
+            inputStyle={{ backgroundColor: '#fff', margin: 16 }}
+          />
         </View>
       </View>
 
