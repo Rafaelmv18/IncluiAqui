@@ -4,6 +4,7 @@ import { router } from "expo-router"
 import { styles } from "./styles";
 import { Input } from "@/src/components/input"
 import { Button } from "@/src/components/button";
+import { IconButton } from "@/src/components/iconButton";
 import { Feather } from "@expo/vector-icons";
 
 export default function Dashboard(){
@@ -24,6 +25,11 @@ export default function Dashboard(){
             title="Cadastrar"
             onPress={() => handleNext("login")}
           />
+          <View style={styles.footer}>
+            <IconButton icon="home" onPress={() => handleNext("login")} />
+            <IconButton icon="map" onPress={() => handleNext("login")} />
+            <IconButton icon="user" onPress={() => handleNext("login")} />
+          </View> 
         </View>
       </View>
 
