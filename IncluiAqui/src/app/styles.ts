@@ -14,10 +14,16 @@ export const styles = StyleSheet.create({
         height: '100%',
         backgroundColor: '#ccc', // cor de fundo temporária
         borderRadius: 0, // opcional
+        alignItems: "center",
+        
     },
-
     input:{
         width: width * 0.9,
+        backgroundColor: "white",
+        alignItems: "center",
+        marginTop: 10,
     },
-
+    icon:{
+        top: 20
+    }
 })
