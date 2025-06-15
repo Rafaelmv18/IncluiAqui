@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     },
 
    esqueceu: {
-    width: "100%",
+        width: "100%",
         alignItems: "flex-end",
         textAlign: "right",
     }
