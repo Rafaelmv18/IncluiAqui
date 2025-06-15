@@ -24,7 +24,8 @@ export const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     card: {
-        width: "80%",
+        alignItems: "center",
+        width: 300,
         padding: 24,
         borderRadius: 15,
         backgroundColor: "#fff", 
@@ -63,7 +64,10 @@ export const styles = StyleSheet.create({
         fontWeight: "bold",
     },
 
-    esqueceu:{
-        textAlign: "right", 
+   esqueceu: {
+    width: "100%",
+        alignItems: "flex-end",
+        textAlign: "right",
     }
+
 });
