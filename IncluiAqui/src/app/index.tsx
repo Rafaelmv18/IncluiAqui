@@ -1,60 +1,54 @@
-import { useState } from "react";
-import { View, Text } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { View, Image, StyleSheet, Animated} from "react-native";
 import { router } from "expo-router";
 
-import { styles } from "./stylesLogin";
-import { Input } from "../components/input";
-import { Button } from "../components/button";
-import { Feather } from "@expo/vector-icons";
+export default function Splash() {
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
-export default function Index() {
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const pages = useState("");;
-
-  function handleNext(pages: string){
+    function handleNext(pages: string){
         router.navigate(`../pages/${pages}`)
     }
+    useEffect(() => {
+        Animated.parallel([
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+        }),
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            friction: 4,
+            useNativeDriver: true,
+        }),
+        ]).start();
 
-  return (
+        const timer = setTimeout(() => {
+        handleNext("login");
+        }, 5000);
+
+        return () => clearTimeout(timer);
+    }, []);
+    return (
     <View style={styles.container}>
-      <View style={styles.avatar}>
-        <Feather name="user" size={48} color="#fff" />
-      </View>
-      {/* Tem que alinhar o card no centro da tela */}
-      <View style={styles.card}>
-        <Input
-          placeholder="Usuário"
-          value={name}
-          onChangeText={setName}
-          icon="user"
-        />
-        <Input
-          placeholder="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          icon="lock"
-        />
-        
-        <Text style={styles.esqueceu}>Esqueceu a senha?</Text>
-
-        <View style={styles.buttonRow}>
-          <Button
-            title="Entrar"
-            style={styles.buttonFilled}
-            onPress={() => handleNext("home")}
-          />
-          <Button
-            title="Cadastrar"
-            style={styles.buttonOutline}
-            titleStyle={styles.titleOutline}
-            onPress={() => handleNext("cadastrar")}
-          />
-        </View>
-      </View>
+      <Image
+        source={require("@/assets/images/logo.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
     </View>
-
-
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#db6300",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logo: {
+    width: 250,
+    height: 250,
+  },
+});
