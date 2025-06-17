@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 
-import { styles } from "./stylesLogin";
+import { styles } from "./styles";
 import { Input } from "@/src/components/input";
 import { Button } from "@/src/components/button";
 import { Feather } from "@expo/vector-icons";
@@ -37,7 +37,10 @@ export default function Index() {
           icon="lock"
         />
         
-        <Text style={styles.esqueceu}>Esqueceu a senha?</Text>
+        <TouchableOpacity style={styles.esqueceu} onPress={() => handleNext("esqueceuSenha")}>
+          <Text>Esqueceu a senha?</Text>
+        </TouchableOpacity>
+        
 
         <View style={styles.buttonRow}>
           <Button
