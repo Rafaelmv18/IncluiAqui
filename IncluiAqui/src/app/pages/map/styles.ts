@@ -27,17 +27,4 @@ export const styles = StyleSheet.create({
     icon:{
         top: 20
     },
-    box:{
-        marginTop: 50,
-        padding: 30,
-        borderWidth: 1,
-        borderColor: '#121214',
-        
-    },
-    filtros:{
-        width: width * 0.9,
-        height: 70,
-        
-    },
-    
 })

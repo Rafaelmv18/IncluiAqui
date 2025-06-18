@@ -23,17 +23,14 @@ export default function Index(){
           {/* Input posicionado sobre o mapa */}
           <Input
               placeholder="Buscar local"
-              icon="search"
+              icon="map-pin"
               inputStyle={styles.input}
               iconStyle={styles.icon}
           />
-
-          <View style={styles.box}>
-            
-            <View style={styles.filtros}>
-                <View></View>
-            </View>
-          </View>
+          <Button
+            title="voltar"
+            onPress={() => router.back()}
+          />
           <Menu/>
         </View>
       </View>

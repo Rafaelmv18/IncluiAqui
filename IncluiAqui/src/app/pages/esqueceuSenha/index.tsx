@@ -32,7 +32,7 @@ export default function Index() {
             title="Continuar"
             style={styles.buttonFilled}
             
-            onPress={() => handleNext("redefinir")}
+            onPress={() => handleNext("esqueceuSenha/redefinir")}
           />
         </View>
       </View>

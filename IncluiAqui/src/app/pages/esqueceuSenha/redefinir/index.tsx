@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 
-import { styles } from "./styles";
+import { styles } from "../styles";
 import { Input } from "@/src/components/input";
 import { Button } from "@/src/components/button";
 import { Feather } from "@expo/vector-icons";
@@ -12,7 +12,7 @@ export default function Index() {
   const pages = useState("");;
 
   function handleNext(pages: string){
-        router.navigate(`../pages/${pages}`)
+        router.navigate(`../${pages}`)
     }
 
   return (
@@ -38,7 +38,7 @@ export default function Index() {
             title="Continuar"
             style={styles.buttonFilled}
             
-            onPress={() => handleNext("cadastrar")}
+            onPress={() => handleNext("login")}
           />
         </View>
       </View>
