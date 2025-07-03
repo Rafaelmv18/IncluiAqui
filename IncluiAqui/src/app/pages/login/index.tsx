@@ -46,7 +46,7 @@ export default function Index() {
           <Button
             title="Entrar"
             style={styles.buttonFilled}
-            onPress={() => handleNext("map")}
+            onPress={() => handleNext("home")}
           />
           <Button
             title="Cadastrar"
