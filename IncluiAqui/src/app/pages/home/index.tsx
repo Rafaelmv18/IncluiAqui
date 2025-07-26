@@ -30,9 +30,10 @@ const lugares = [
 export default function Index() {
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
 
-  function handleNext(pages: string) {
-    router.navigate(`../${pages}`);
+  function handleNext(page: string) {
+    router.push(`./${page}`);
   }
+
 
   return (
     <View style={styles.container}>
@@ -67,7 +68,11 @@ export default function Index() {
         keyExtractor={(_, i) => i.toString()}
         contentContainerStyle={styles.lista}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+         <TouchableOpacity 
+            style={styles.card} 
+            activeOpacity={0.8} 
+            onPress={() => handleNext("infoLocal")}
+          >
             <View style={styles.circle} />
             <View style={styles.info}>
               <Text style={styles.title}>{item.nome}</Text>
@@ -84,7 +89,8 @@ export default function Index() {
               <Text style={styles.desc}>Acessibilidade:</Text>
               <Text style={styles.km}>{item.distancia}</Text>
             </View>
-          </View>
+          </TouchableOpacity>
+
         )}
       />
 
