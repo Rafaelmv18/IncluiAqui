@@ -7,14 +7,16 @@ type Props = TouchableOpacityProps & {
   icon: keyof typeof Feather.glyphMap;
   iconColor?: string;
   iconSize?: number;
-  isSelected?: boolean; // <- aqui!
+  isSelected?: boolean;
+  showConfig?: boolean; // <- aqui!
 };
 
 export function IconButton({
   icon,
   iconColor = "#2A2A2A",
   iconSize = 30,
-  isSelected = false, // <- aqui!
+  isSelected = false,
+  showConfig = false, // <- aqui!
   ...rest
 }: Props) {
   return (
@@ -22,7 +24,7 @@ export function IconButton({
       <Feather
         name={icon}
         size={iconSize}
-        color={isSelected ? "#DB6300" : iconColor} // <- muda a cor se estiver selecionado
+        color={(isSelected || showConfig) ? "#DB6300" : iconColor} // <- muda a cor se estiver selecionado
       />
     </TouchableOpacity>
   );
