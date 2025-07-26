@@ -14,7 +14,13 @@ export function ConfigPanel() {
   );
 }
 
-function Item({ icon, title, subtitle }) {
+type ItemProps = {
+  icon: keyof typeof Feather.glyphMap;
+  title: string;
+  subtitle: string;
+};
+
+function Item({ icon, title, subtitle } : ItemProps) {
   return (
     <View style={styles.item}>
       <Feather name={icon} size={20} color="#666" />
@@ -35,12 +41,8 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "#fff",
     padding: 10,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
     shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 10,
   },
   item: {
     flexDirection: "row",
