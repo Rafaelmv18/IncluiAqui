@@ -1,12 +1,15 @@
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { View, Text, StyleSheet,  FlatList, TouchableOpacity, Image} from "react-native"
 import { router } from "expo-router"
 
 import { Menu } from "@/src/components/menu"
+import { useLocationCoordinates } from "@/src/hooks/useCurrentLocation";
 
 import { styles } from "./styles";
 import { Input } from "@/src/components/input"
 import { Feather } from "@expo/vector-icons";
+import {searchNearbyPlaces} from "../../../core/api";
 
 const categorias = [
   { nome: "Restaurantes", icon: "coffee" },
@@ -29,11 +32,51 @@ const lugares = [
 
 export default function Index() {
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
+  const [places, setPlaces] = useState([]);
+  const [isLoadingPlaces, setIsLoadingPlaces] = useState(false);
+  
+  const { latitude, longitude, isLoading: locationLoading, error: locationError } = useLocationCoordinates();
 
   function handleNext(page: string) {
     router.push(`./${page}`);
   }
 
+  function handleOnPress(item: String, value?: string) {
+   if (item === "search") {
+      setSearchText(value || "");
+    }
+  }
+
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      // Não busca se ainda está carregando a localização
+      if (locationLoading) return;
+      
+      setIsLoadingPlaces(true);
+      
+      try {
+        const response = await searchNearbyPlaces({ 
+          latitude,
+          longitude,
+          radius: 5000, // 5km radius
+          keyword: searchText || "estabelecimento",
+          type: "establishment" // Default type
+        });
+        console.log("Search Results:", response);
+        console.log("Using coordinates:", { latitude, longitude });
+        setPlaces(response || []);
+      } catch (error) {
+        console.error("Error fetching places:", error);
+        setPlaces([]);
+      } finally {
+        setIsLoadingPlaces(false);
+      }
+    };
+
+    fetchPlaces();
+  }, [searchText]);
+  
 
   return (
     <View style={styles.container}>
@@ -47,6 +90,7 @@ export default function Index() {
               icon="map-pin"
               inputStyle={styles.input}
               iconStyle={styles.icon}
+              onChangeText={(value) => handleOnPress("search", value)}
             />
 
             {/* Grid de categorias */}
@@ -99,4 +143,3 @@ export default function Index() {
     </View>
   );
 }
-
