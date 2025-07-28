@@ -107,6 +107,10 @@ export default function InfoLocal() {
           // Se não encontrar, buscar detalhes do Google Places
           const details = await getPlaceDetails(placeId);
           setPlaceDetails(details);
+          setEstablishmentData(details);
+          if (details) {
+            getReviews()
+          }
         } catch (error) {
           console.warn("Erro ao buscar detalhes do place:", error);
           // Se falhar, usar dados locais se disponíveis
@@ -199,7 +203,7 @@ export default function InfoLocal() {
       features.push(
         {
           name: acc.entrance
-            ? "✅ Entrada p/ cadeirantes"
+            ? "✅ Entrada para cadeirantes"
             : "❌ Sem entrada acessível",
           color: acc.entrance ? "#4CAF50" : "#FF6B6B",
         },
@@ -230,7 +234,7 @@ export default function InfoLocal() {
   };
 
   const getReviews = () => {
-    return establishmentData?.reviews || [];
+    return establishmentData?.reviews || placeDetails?.reviews || [];
   };
 
   const getOpeningHours = () => {
@@ -361,16 +365,16 @@ export default function InfoLocal() {
 
       {/* ACESSIBILIDADES */}
       <Text style={styles.accessTitle}>Acessibilidades disponíveis:</Text>
-      <View style={styles.accessRow}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.accessRow}>
         {getAccessibilityFeatures().map((feature, index) => (
           <View
-            key={index}
-            style={[styles.accessBadge, { backgroundColor: feature.color }]}
+        key={index}
+        style={[styles.accessBadge, { backgroundColor: feature.color }]}
           >
-            <Text style={styles.accessText}>{feature.name}</Text>
+        <Text style={styles.accessText}>{feature.name}</Text>
           </View>
         ))}
-      </View>
+      </ScrollView>
 
       {/* ABAS */}
       <View style={styles.tabContainer}>
