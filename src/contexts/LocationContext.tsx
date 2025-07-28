@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Alert, Platform } from 'react-native';
+import * as Location from 'expo-location';
 
 // Tipo simplificado para localização
 interface SimpleLocation {
@@ -36,7 +37,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
 
     try {
       if (Platform.OS === 'web') {
-        // Usar API Web Geolocation para web
+        // Usar API Web Geolocation para web com alta precisão
         if (!navigator.geolocation) {
           throw new Error('Geolocalização não é suportada neste navegador');
         }
@@ -52,34 +53,81 @@ export function LocationProvider({ children }: LocationProviderProps) {
               timestamp: position.timestamp,
             };
             setLocation(newLocation);
-            console.log('Localização obtida (Web):', newLocation);
+            console.log('Localização obtida (Web) - Precisão:', newLocation.coords.accuracy + 'm', newLocation);
             setIsLoading(false);
           },
           (error) => {
             console.error('Erro ao obter localização (Web):', error);
-            setErrorMsg('Erro ao obter localização: ' + error.message);
-            setIsLoading(false);
+            
+            // Fallback para precisão menor se alta precisão falhar
+            if (error.code === error.TIMEOUT || error.code === error.PERMISSION_DENIED) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const newLocation: SimpleLocation = {
+                    coords: {
+                      latitude: position.coords.latitude,
+                      longitude: position.coords.longitude,
+                      accuracy: position.coords.accuracy,
+                    },
+                    timestamp: position.timestamp,
+                  };
+                  setLocation(newLocation);
+                  console.log('Localização obtida (Web - Fallback):', newLocation);
+                  setIsLoading(false);
+                },
+                (fallbackError) => {
+                  console.error('Erro no fallback:', fallbackError);
+                  setErrorMsg('Erro ao obter localização: ' + fallbackError.message);
+                  setIsLoading(false);
+                },
+                {
+                  enableHighAccuracy: false,
+                  timeout: 5000,
+                  maximumAge: 60000, // 1 minuto
+                }
+              );
+            } else {
+              setErrorMsg('Erro ao obter localização: ' + error.message);
+              setIsLoading(false);
+            }
           },
           {
-            enableHighAccuracy: false,
-            timeout: 10000,
-            maximumAge: 300000, // 5 minutos
+            enableHighAccuracy: true,  // Ativar alta precisão
+            timeout: 15000,           // Timeout maior para permitir GPS
+            maximumAge: 30000,        // Cache por apenas 30 segundos
           }
         );
       } else {
-        // Para mobile, usar uma localização padrão temporariamente
-        // Isso pode ser substituído por expo-location quando o problema for resolvido
-        const defaultLocation: SimpleLocation = {
+        // Para mobile, usar expo-location com alta precisão
+        console.log('Iniciando localização mobile com expo-location...');
+        
+        // Verificar permissões
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Permissão de localização negada');
+          Alert.alert('Permissão necessária', 'Por favor, permita o acesso à localização para funcionar corretamente.');
+          setIsLoading(false);
+          return;
+        }
+
+        // Obter localização com alta precisão
+        const expoLocation = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.BestForNavigation, // Máxima precisão
+          timeInterval: 1000,      // Atualizar a cada 1 segundo
+          distanceInterval: 1,     // Atualizar a cada 1 metro
+        });
+
+        const newLocation: SimpleLocation = {
           coords: {
-            latitude: -23.5505, // São Paulo
-            longitude: -46.6333,
-            accuracy: null,
+            latitude: expoLocation.coords.latitude,
+            longitude: expoLocation.coords.longitude,
+            accuracy: expoLocation.coords.accuracy,
           },
-          timestamp: Date.now(),
+          timestamp: expoLocation.timestamp,
         };
         
-        setLocation(defaultLocation);
-        console.log('Usando localização padrão (Mobile):', defaultLocation);
+        setLocation(newLocation);
+        console.log('📍 Localização obtida (Mobile expo-location) - Precisão:', newLocation.coords.accuracy + 'm', newLocation);
         setIsLoading(false);
       }
     } catch (error) {
@@ -91,6 +139,8 @@ export function LocationProvider({ children }: LocationProviderProps) {
   };
 
   const getCurrentPosition = async (): Promise<SimpleLocation | null> => {
+    setIsLoading(true);
+    
     try {
       if (Platform.OS === 'web' && navigator.geolocation) {
         return new Promise((resolve, reject) => {
@@ -105,37 +155,86 @@ export function LocationProvider({ children }: LocationProviderProps) {
                 timestamp: position.timestamp,
               };
               setLocation(newLocation);
+              console.log('Nova localização obtida - Precisão:', newLocation.coords.accuracy + 'm');
+              setIsLoading(false);
               resolve(newLocation);
             },
             (error) => {
               console.error('Erro ao obter posição atual:', error);
-              setErrorMsg('Erro ao obter localização');
-              reject(error);
+              
+              // Fallback para precisão menor
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const newLocation: SimpleLocation = {
+                    coords: {
+                      latitude: position.coords.latitude,
+                      longitude: position.coords.longitude,
+                      accuracy: position.coords.accuracy,
+                    },
+                    timestamp: position.timestamp,
+                  };
+                  setLocation(newLocation);
+                  console.log('Localização obtida (Fallback):', newLocation);
+                  setIsLoading(false);
+                  resolve(newLocation);
+                },
+                (fallbackError) => {
+                  console.error('Erro no fallback getCurrentPosition:', fallbackError);
+                  setErrorMsg('Erro ao obter localização');
+                  setIsLoading(false);
+                  reject(fallbackError);
+                },
+                {
+                  enableHighAccuracy: false,
+                  timeout: 5000,
+                  maximumAge: 60000,
+                }
+              );
             },
             {
-              enableHighAccuracy: false,
-              timeout: 10000,
-              maximumAge: 300000,
+              enableHighAccuracy: true,  // Sempre tentar alta precisão primeiro
+              timeout: 15000,
+              maximumAge: 10000,         // Cache muito curto para posição atual
             }
           );
         });
       } else {
-        // Retornar localização padrão para mobile temporariamente
-        const defaultLocation: SimpleLocation = {
+        // Para mobile, usar expo-location com alta precisão
+        console.log('Obtendo posição atual (Mobile)...');
+        
+        // Verificar permissões
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Permissão de localização negada');
+          setIsLoading(false);
+          throw new Error('Permissão de localização negada');
+        }
+
+        // Obter localização atual com máxima precisão
+        const expoLocation = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeInterval: 500,       // Mais rápido para getCurrentPosition
+          distanceInterval: 1,
+        });
+
+        const newLocation: SimpleLocation = {
           coords: {
-            latitude: -23.5505, // São Paulo
-            longitude: -46.6333,
-            accuracy: null,
+            latitude: expoLocation.coords.latitude,
+            longitude: expoLocation.coords.longitude,
+            accuracy: expoLocation.coords.accuracy,
           },
-          timestamp: Date.now(),
+          timestamp: expoLocation.timestamp,
         };
         
-        setLocation(defaultLocation);
-        return defaultLocation;
+        setLocation(newLocation);
+        console.log('📍 Nova posição obtida (Mobile) - Precisão:', newLocation.coords.accuracy + 'm');
+        setIsLoading(false);
+        return newLocation;
       }
     } catch (error) {
       console.error('Erro ao obter posição atual:', error);
       setErrorMsg('Erro ao obter localização');
+      setIsLoading(false);
       return null;
     }
   };

@@ -35,10 +35,42 @@ export const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
+    categoryButtonSelected: {
+        backgroundColor: "#db6300",
+    },
     categoryText: {
         marginTop: 4,
         fontSize: 12,
         color: "#000",
+    },
+    categoryTextSelected: {
+        color: "#fff",
+    },
+    loadingContainer: {
+        paddingVertical: 30,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 14,
+        color: "#666",
+    },
+    emptyContainer: {
+        paddingVertical: 40,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    emptyText: {
+        fontSize: 16,
+        color: "#666",
+        marginTop: 10,
+        fontWeight: "bold",
+    },
+    emptySubtext: {
+        fontSize: 14,
+        color: "#999",
+        marginTop: 5,
     },
     lista: {
         paddingBottom: 80,
@@ -58,6 +90,14 @@ export const styles = StyleSheet.create({
         borderRadius: 25,
         backgroundColor: "#db6300",
         marginRight: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+    },
+    placeImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
     },
     info: {
         flex: 1,
@@ -65,10 +105,25 @@ export const styles = StyleSheet.create({
     title: {
         fontWeight: "bold",
         fontSize: 14,
+        marginBottom: 2,
+    },
+    address: {
+        fontSize: 12,
+        color: "#666",
+        marginBottom: 4,
+    },
+    ratingContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 2,
     },
     stars: {
         flexDirection: "row",
-        marginVertical: 2,
+        marginRight: 8,
+    },
+    ratingText: {
+        fontSize: 12,
+        color: "#666",
     },
     desc: {
         fontSize: 12,
