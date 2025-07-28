@@ -1,7 +1,19 @@
 
 const API_URL = 'http://192.168.0.4:4444';
 
-export async function searchNearbyPlaces({ latitude, longitude, radius, keyword, type }) {
+export async function searchNearbyPlaces({
+  latitude,
+  longitude,
+  radius,
+  keyword,
+  type
+}: {
+  latitude: number;
+  longitude: number;
+  radius: number;
+  keyword?: string;
+  type?: string;
+}) {
   // Construir os parâmetros de query
   const params = new URLSearchParams({
     lat: latitude.toString(),
@@ -33,7 +45,16 @@ export async function searchNearbyPlaces({ latitude, longitude, radius, keyword,
     console.error("Fetch Error:", error);
 
     // Se for erro de rede, retornar array vazio em vez de quebrar
-    if (error.message.includes('Failed to fetch') || error.message.includes('Network request failed')) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'message' in error &&
+      typeof (error as { message: string }).message === 'string' &&
+      (
+        (error as { message: string }).message.includes('Failed to fetch') ||
+        (error as { message: string }).message.includes('Network request failed')
+      )
+    ) {
       console.warn("Erro de rede - retornando dados mockados");
       return [];
     }
@@ -48,7 +69,7 @@ export async function searchNearbyPlaces({ latitude, longitude, radius, keyword,
 //   return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${API_KEY}`;
 // }
 
-export async function getGooglePlacePhotoUrl(photoReference, maxWidth = 100) {
+export async function getGooglePlacePhotoUrl(photoReference: string, maxWidth: number = 100): Promise<string> {
   const params = new URLSearchParams({
     photoReference: photoReference,
     maxWidth: maxWidth.toString()
@@ -64,7 +85,7 @@ export async function getGooglePlacePhotoUrl(photoReference, maxWidth = 100) {
 }
 
 
-export async function getPlaceDetails(placeId) {
+export async function getPlaceDetails(placeId: string) {
   try {
     const response = await fetch(`${API_URL}/api/places/details/${placeId}`, {
       method: 'GET',
@@ -77,6 +98,31 @@ export async function getPlaceDetails(placeId) {
       const errorData = await response.text();
       console.error("API Error:", errorData);
       throw new Error(`Erro ${response.status}: ${errorData || 'Erro ao buscar detalhes do estabelecimento'}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    throw error;
+  }
+}
+
+
+export async function getRouteCoordinates(origin: { latitude: number; longitude: number }, destination: { latitude: number; longitude: number }) {
+  try {
+    const response = await fetch(`${API_URL}/api/places/path`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ origin, destination })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error("API Error:", errorData);
+      throw new Error(`Erro ${response.status}: ${errorData || 'Erro ao buscar coordenadas da rota'}`);
     }
 
     const data = await response.json();

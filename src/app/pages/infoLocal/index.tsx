@@ -109,7 +109,7 @@ export default function InfoLocal() {
           setPlaceDetails(details);
           setEstablishmentData(details);
           if (details) {
-            getReviews()
+            getReviews();
           }
         } catch (error) {
           console.warn("Erro ao buscar detalhes do place:", error);
@@ -341,7 +341,21 @@ export default function InfoLocal() {
       {/* BOTÃO DE ROTAS */}
       <TouchableOpacity
         style={styles.routeButton}
-        onPress={() => handleNext("map")}
+        onPress={() => {
+          const latitude = establishmentData?.latitude || placeDetails?.location?.lat;
+          const longitude = establishmentData?.longitude || placeDetails?.location?.lng;
+          const name = getName();
+          const address = getFormattedAddress();
+          router.push({
+            pathname: '../pages/map',
+            params: {
+              latitude: latitude?.toString() || '',
+              longitude: longitude?.toString() || '',
+              name,
+              address,
+            },
+          });
+        }}
       >
         <Feather name="navigation" size={16} color="#fff" />
         <Text style={styles.routeText}>Rotas</Text>
@@ -365,13 +379,17 @@ export default function InfoLocal() {
 
       {/* ACESSIBILIDADES */}
       <Text style={styles.accessTitle}>Acessibilidades disponíveis:</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.accessRow}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.accessRow}
+      >
         {getAccessibilityFeatures().map((feature, index) => (
           <View
-        key={index}
-        style={[styles.accessBadge, { backgroundColor: feature.color }]}
+            key={index}
+            style={[styles.accessBadge, { backgroundColor: feature.color }]}
           >
-        <Text style={styles.accessText}>{feature.name}</Text>
+            <Text style={styles.accessText}>{feature.name}</Text>
           </View>
         ))}
       </ScrollView>
