@@ -52,7 +52,7 @@ function RootLayoutNav() {
   return (
     <LocationProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack screenOptions={{ headerShown: false,  }}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="pages/login/index" options={{ headerShown: false }} />
           <Stack.Screen name="pages/cadastrar/index" options={{ headerShown: false }} />

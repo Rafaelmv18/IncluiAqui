@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
         paddingLeft: 30,
-        
+        paddingTop: 12,
     },
     icon: {
         position: 'absolute', // Posiciona o ícone de forma absoluta dentro do container

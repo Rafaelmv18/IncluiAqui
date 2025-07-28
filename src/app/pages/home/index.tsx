@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { View, Text, StyleSheet,  FlatList, TouchableOpacity, Image, ActivityIndicator} from "react-native"
+import { View, Text, StyleSheet,  FlatList, TouchableOpacity, Image, ActivityIndicator, SafeAreaView} from "react-native"
 import { router } from "expo-router"
 
 import { Menu } from "@/src/components/menu"
@@ -164,7 +164,7 @@ export default function Index() {
   
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Conteúdo com rolagem */}
       <FlatList
         ListHeaderComponent={
@@ -244,6 +244,6 @@ export default function Index() {
 
       {/* Menu fixo */}
       <Menu />
-    </View>
+    </SafeAreaView>
   );
 }

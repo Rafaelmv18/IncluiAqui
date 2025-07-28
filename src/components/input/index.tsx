@@ -1,7 +1,8 @@
-import { TextInput, TextInputProps, View } from "react-native";
+import { SafeAreaView, TextInput, TextInputProps, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { styles } from "./styles";
+import React from "react";
 
 type Props = TextInputProps & {
   // error: string
@@ -12,7 +13,7 @@ type Props = TextInputProps & {
 // error = ''
 export function Input({ icon, inputStyle, iconStyle, ...rest }: Props) {
   return (
-    <View>
+    <SafeAreaView>
       <Feather  
         name={icon}
         size={24}
@@ -33,6 +34,6 @@ export function Input({ icon, inputStyle, iconStyle, ...rest }: Props) {
         {error}
       </Text>
       } */}
-    </View>
+    </SafeAreaView>
   );
 }

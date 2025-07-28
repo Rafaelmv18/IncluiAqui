@@ -1,10 +1,11 @@
 // src/components/BottomMenu.tsx
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import { IconButton } from "../iconButton";
 import { useRouter } from "expo-router";
 import { styles } from "./styles";
 import { useState } from "react";
 import { ConfigPanel } from "../../components/configPainel"; 
+import React from "react";
 
 export function Menu() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export function Menu() {
 
   return (
     <>
-      <View style={styles.menu}>
+      <SafeAreaView style={styles.menu}>
         <IconButton 
           icon="home" 
           onPress={() => handleNavigate("home")} 
@@ -51,7 +52,7 @@ export function Menu() {
           onPress={toggleConfig} 
           isSelected={activeTab === "user"} 
         />
-      </View>
+      </SafeAreaView>
 
       {showConfig && <ConfigPanel />}
     </>
