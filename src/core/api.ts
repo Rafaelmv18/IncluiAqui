@@ -1,5 +1,5 @@
 
-const API_URL = 'http://192.168.0.4:4444';
+const API_URL = 'http://192.168.0.2:4444';
 
 export async function searchNearbyPlaces({
   latitude,
