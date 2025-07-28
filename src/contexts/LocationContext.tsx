@@ -53,7 +53,6 @@ export function LocationProvider({ children }: LocationProviderProps) {
               timestamp: position.timestamp,
             };
             setLocation(newLocation);
-            console.log('Localização obtida (Web) - Precisão:', newLocation.coords.accuracy + 'm', newLocation);
             setIsLoading(false);
           },
           (error) => {
@@ -72,7 +71,6 @@ export function LocationProvider({ children }: LocationProviderProps) {
                     timestamp: position.timestamp,
                   };
                   setLocation(newLocation);
-                  console.log('Localização obtida (Web - Fallback):', newLocation);
                   setIsLoading(false);
                 },
                 (fallbackError) => {
@@ -99,7 +97,6 @@ export function LocationProvider({ children }: LocationProviderProps) {
         );
       } else {
         // Para mobile, usar expo-location com alta precisão
-        console.log('Iniciando localização mobile com expo-location...');
         
         // Verificar permissões
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -127,7 +124,6 @@ export function LocationProvider({ children }: LocationProviderProps) {
         };
         
         setLocation(newLocation);
-        console.log('📍 Localização obtida (Mobile expo-location) - Precisão:', newLocation.coords.accuracy + 'm', newLocation);
         setIsLoading(false);
       }
     } catch (error) {
@@ -155,7 +151,6 @@ export function LocationProvider({ children }: LocationProviderProps) {
                 timestamp: position.timestamp,
               };
               setLocation(newLocation);
-              console.log('Nova localização obtida - Precisão:', newLocation.coords.accuracy + 'm');
               setIsLoading(false);
               resolve(newLocation);
             },
@@ -174,7 +169,6 @@ export function LocationProvider({ children }: LocationProviderProps) {
                     timestamp: position.timestamp,
                   };
                   setLocation(newLocation);
-                  console.log('Localização obtida (Fallback):', newLocation);
                   setIsLoading(false);
                   resolve(newLocation);
                 },
@@ -199,9 +193,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
           );
         });
       } else {
-        // Para mobile, usar expo-location com alta precisão
-        console.log('Obtendo posição atual (Mobile)...');
-        
+        // Para mobile, usar expo-location com alta precisão    
         // Verificar permissões
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
@@ -227,7 +219,6 @@ export function LocationProvider({ children }: LocationProviderProps) {
         };
         
         setLocation(newLocation);
-        console.log('📍 Nova posição obtida (Mobile) - Precisão:', newLocation.coords.accuracy + 'm');
         setIsLoading(false);
         return newLocation;
       }

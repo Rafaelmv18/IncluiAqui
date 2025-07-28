@@ -4,6 +4,7 @@ import { View, Text, StyleSheet,  FlatList, TouchableOpacity, Image, ActivityInd
 import { router } from "expo-router"
 
 import { Menu } from "@/src/components/menu"
+import { PlaceCard } from "@/src/components/placeCard"
 import { useLocationCoordinates } from "@/src/hooks/useCurrentLocation";
 
 import { styles } from "./styles";
@@ -33,6 +34,7 @@ interface Place {
   types?: string[];
   priceLevel?: number;
   photos?: PlacePhoto[];
+  imageUrl?: string | null; // Aceitar null também
 }
 
 const categorias = [
@@ -66,37 +68,21 @@ export default function Index() {
     lastUpdated
   } = useLocationCoordinates();
 
-  function handleNext(page: string) {
-    router.push(`./${page}`);
+  function handleNext(page: string, params?: any) {
+    if (params) {
+      router.push({
+        pathname: `./${page}`,
+        params: params
+      });
+    } else {
+      router.push(`./${page}`);
+    }
   }
 
   function handleOnPress(item: String, value?: string) {
    if (item === "search") {
       setSearchText(value || "");
     }
-  }
-
-  // Função para obter URL da foto do Google Places
-  const getPhotoUrl = (photoReference: string) => {
-    return getGooglePlacePhotoUrl(photoReference, 100);
-  };
-
-  // Função para calcular distância usando a fórmula de Haversine
-  function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): string {
-    const R = 6371; // Raio da Terra em km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c;
-    
-    if (distance < 1) {
-      return `${Math.round(distance * 1000)}m`;
-    }
-    return `${distance.toFixed(1)}km`;
   }
 
   // Função para buscar estabelecimentos por categoria
@@ -160,7 +146,7 @@ export default function Index() {
           keyword: searchText || "estabelecimento",
           type: "establishment" // Default type
         });
-        console.log(`📍 Usando coordenadas: ${latitude.toFixed(6)}, ${longitude.toFixed(6)} (Precisão: ${accuracy ? accuracy.toFixed(0) + 'm' : 'N/A'})`);
+        
         setPlaces(response || []);
       } catch (error) {
         console.error("Error fetching places:", error);
@@ -241,67 +227,19 @@ export default function Index() {
         data={places}
         keyExtractor={(item, index) => item.placeId || index.toString()}
         contentContainerStyle={styles.lista}
-        renderItem={({ item }) => {
-          // Calcular distância do usuário até o estabelecimento
-          const distance = calculateDistance(
-            latitude, 
-            longitude, 
-            item.location.lat, 
-            item.location.lng
-          );
-
-          // Calcular estrelas baseado no rating (convertendo de 0-5 para 0-5)
-          const stars = item.rating ? Math.round(item.rating) : 0;
-
-          return (
-            <TouchableOpacity 
-              style={styles.card} 
-              activeOpacity={0.8} 
-              onPress={() => handleNext("infoLocal")}
-            >
-              <View style={styles.circle}>
-                {item.photos && item.photos.length > 0 ? (
-                  <Image 
-                    source={{ 
-                      uri: getPhotoUrl(item.photos[0].photoReference)
-                    }}
-                    style={styles.placeImage}
-                    defaultSource={{ uri: 'https://via.placeholder.com/50x50?text=?' }}
-                  />
-                ) : (
-                  <Feather name="map-pin" size={24} color="#fff" />
-                )}
-              </View>
-              <View style={styles.info}>
-                <Text style={styles.title} numberOfLines={1}>
-                  {item.name}
-                </Text>
-                <Text style={styles.address} numberOfLines={1}>
-                  {item.address}
-                </Text>
-                <View style={styles.ratingContainer}>
-                  <View style={styles.stars}>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Feather
-                        key={i}
-                        name="star"
-                        size={16}
-                        color={i < stars ? "#f5a623" : "#ccc"}
-                      />
-                    ))}
-                  </View>
-                  {item.rating && (
-                    <Text style={styles.ratingText}>
-                      {item.rating.toFixed(1)} ({item.userRatingsTotal || 0})
-                    </Text>
-                  )}
-                </View>
-                <Text style={styles.desc}>Distância:</Text>
-                <Text style={styles.km}>{distance}</Text>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
+        renderItem={({ item }) => (
+          <PlaceCard
+            place={item}
+            userLatitude={latitude}
+            userLongitude={longitude}
+            onPress={() => handleNext("infoLocal", { 
+              placeId: item.placeId, 
+              placeName: item.name,
+              placeData: JSON.stringify(item)
+            })}
+            styles={styles}
+          />
+        )}
       />
 
       {/* Menu fixo */}

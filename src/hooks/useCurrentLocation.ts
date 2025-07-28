@@ -58,7 +58,6 @@ export function useCurrentLocation(): UseCurrentLocationReturn {
             const result = await navigator.permissions.query({ name: 'geolocation' });
             setHasPermission(result.state === 'granted' || result.state === 'prompt');
           } catch (error) {
-            console.log('Permissions API não disponível, usando fallback');
             setHasPermission(!!navigator.geolocation);
           }
         }
@@ -73,7 +72,6 @@ export function useCurrentLocation(): UseCurrentLocationReturn {
   };
 
   const refreshLocation = async () => {
-    console.log('Atualizando localização...');
     
     if (!hasPermission) {
       await requestLocation();
@@ -88,8 +86,19 @@ export function useCurrentLocation(): UseCurrentLocationReturn {
     if (Platform.OS === 'web' && navigator.geolocation && hasPermission) {
       watchIdRef.current = navigator.geolocation.watchPosition(
         (position) => {
-          console.log('Nova posição detectada:', position.coords);
-          // Aqui você pode atualizar o contexto se necessário
+          const newLocation: SimpleLocation = {
+            coords: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+            },
+            timestamp: position.timestamp,
+          };
+          // Atualizar localização no contexto
+          if (location) {
+            location.coords = newLocation.coords;
+            location.timestamp = newLocation.timestamp;
+          }
         },
         (error) => {
           console.error('Erro no watch position:', error);

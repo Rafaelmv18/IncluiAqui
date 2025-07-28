@@ -19,7 +19,6 @@ export async function searchNearbyPlaces({ latitude, longitude, radius, keyword,
       }
     });
 
-    console.log("API Response Status:", response.status);
 
     if (!response.ok) {
       const errorData = await response.text();
@@ -28,24 +27,62 @@ export async function searchNearbyPlaces({ latitude, longitude, radius, keyword,
     }
 
     const data = await response.json();
-    console.log("API Response Data:", data);
-    
+
     return data;
   } catch (error) {
     console.error("Fetch Error:", error);
-    
+
     // Se for erro de rede, retornar array vazio em vez de quebrar
     if (error.message.includes('Failed to fetch') || error.message.includes('Network request failed')) {
       console.warn("Erro de rede - retornando dados mockados");
       return [];
     }
-    
+
     throw error;
   }
 }
 
 // Função auxiliar para obter URL de foto do Google Places
-export function getGooglePlacePhotoUrl(photoReference, maxWidth = 100) {
-  const API_KEY = 'AIzaSyAIyX_fXuGgz1eOqebPM1O7msgqe5_ktkQ'; // Em produção, mover para variável de ambiente
-  return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${API_KEY}`;
+// export function getGooglePlacePhotoUrl(photoReference, maxWidth = 100) {
+//   const API_KEY = 'AIzaSyAIyX_fXuGgz1eOqebPM1O7msgqe5_ktkQ'; // Em produção, mover para variável de ambiente
+//   return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${API_KEY}`;
+// }
+
+export async function getGooglePlacePhotoUrl(photoReference, maxWidth = 100) {
+  const params = new URLSearchParams({
+    photoReference: photoReference,
+    maxWidth: maxWidth.toString()
+  });
+  const response = await fetch(`${API_URL}/api/places/picture?${params}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  const data = await response.json();
+  return data.url;
+}
+
+
+export async function getPlaceDetails(placeId) {
+  try {
+    const response = await fetch(`${API_URL}/api/places/details/${placeId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error("API Error:", errorData);
+      throw new Error(`Erro ${response.status}: ${errorData || 'Erro ao buscar detalhes do estabelecimento'}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    throw error;
+  }
 }

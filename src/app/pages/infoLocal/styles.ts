@@ -162,5 +162,50 @@ export const styles = StyleSheet.create({
   commentDate: {
     fontSize: 12,
     color: "#999"
+  },
+
+  /* NOVOS ESTILOS PARA DADOS DINÂMICOS */
+  infoDescription: {
+    fontSize: 16,
+    color: "#333",
+    lineHeight: 24,
+    marginBottom: 10
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 4
+  },
+  ratingNumber: {
+    fontSize: 12,
+    color: "#666",
+    marginLeft: 6
+  },
+  commentTitle: {
+    fontWeight: "bold",
+    color: "#333",
+    fontSize: 14,
+    marginVertical: 2
+  },
+  noCommentsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 40,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+    marginTop: 10
+  },
+  noCommentsText: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginTop: 12,
+    fontWeight: "500"
+  },
+  noCommentsSubtext: {
+    fontSize: 14,
+    color: "#999",
+    textAlign: "center",
+    marginTop: 4
   }
 });
