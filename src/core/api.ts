@@ -1,7 +1,6 @@
 
 const API_URL = 'https://inclui-aqui-backend-1.onrender.com';
 
-
 export async function searchNearbyPlaces({
   latitude,
   longitude,
