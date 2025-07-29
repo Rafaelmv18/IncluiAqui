@@ -323,7 +323,7 @@ export default function InfoLocal() {
             ))}
           </View>
           <View style={styles.distanceRow}>
-            <Feather name="map-pin" size={14} color="#333" />
+            <Feather  size={14} color="#333" />
             <Text style={styles.distance}>
               {getRating() > 0
                 ? `${getRating().toFixed(1)} ⭐`
