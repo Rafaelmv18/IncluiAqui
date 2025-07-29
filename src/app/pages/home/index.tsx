@@ -41,13 +41,13 @@ const categorias = [
   { nome: "Restaurantes", icon: "coffee" },
   { nome: "Salão", icon: "scissors" },
   { nome: "Supermercados", icon: "shopping-cart" },
-  { nome: "Parques", icon: "tree" },
-  { nome: "Estações", icon: "navigation" },
+  { nome: "Parques", icon: "feather" },          
+  { nome: "Estações", icon: "map-pin" },     
   { nome: "Cinemas", icon: "film" },
   { nome: "Hotéis", icon: "home" },
   { nome: "Academias", icon: "activity" },
   { nome: "Hospitais", icon: "plus-square" },
-  { nome: "Aeroportos", icon: "send" },
+  { nome: "Aeroportos", icon: "send" },     
 ];
 
 export default function Index() {

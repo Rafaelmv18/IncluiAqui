@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { styles } from "./styles";
+import { Menu } from "@/src/components/menu"
 import { Input } from "@/src/components/input";
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import React from "react";
@@ -112,6 +113,8 @@ export default function Index() {
           iconStyle={styles.icon}
         />
       </View>
+      <Menu />
     </SafeAreaView>
+    
   );
 }

@@ -25,6 +25,8 @@ export const styles = StyleSheet.create({
         marginTop: 10,
     },
     icon:{
+        color: "#000",
+        zIndex: 2,
         top: 20
     },
 })

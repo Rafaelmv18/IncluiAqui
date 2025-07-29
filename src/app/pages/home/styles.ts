@@ -19,6 +19,8 @@ export const styles = StyleSheet.create({
     },
     icon: {
         color: "#000",
+        zIndex: 2,
+        top: 20
     },
     grid: {
         width: width * 0.9,
