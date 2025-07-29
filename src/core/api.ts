@@ -1,5 +1,5 @@
 
-const API_URL = 'http://192.168.0.2:4444';
+const API_URL = 'https://inclui-aqui-backend-1.onrender.com';
 
 export async function searchNearbyPlaces({
   latitude,
