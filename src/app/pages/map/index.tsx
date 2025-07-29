@@ -113,7 +113,7 @@ export default function Index() {
           iconStyle={styles.icon}
         />
       </View>
-      <Menu />
+     
     </SafeAreaView>
     
   );
