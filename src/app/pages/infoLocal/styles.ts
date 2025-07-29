@@ -104,6 +104,12 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  accessColumn: {
+  flexDirection: "column",
+  gap: 8,              // espaçamento entre os itens (React Native 0.71+)
+  marginVertical: 10,
+},
+
 
   /* TABS */
   tabContainer: {

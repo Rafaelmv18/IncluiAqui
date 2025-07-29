@@ -379,20 +379,16 @@ export default function InfoLocal() {
 
       {/* ACESSIBILIDADES */}
       <Text style={styles.accessTitle}>Acessibilidades disponíveis:</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.accessRow}
-      >
-        {getAccessibilityFeatures().map((feature, index) => (
-          <View
-            key={index}
-            style={[styles.accessBadge, { backgroundColor: feature.color }]}
-          >
-            <Text style={styles.accessText}>{feature.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
+        <View style={styles.accessColumn}>
+          {getAccessibilityFeatures().map((feature, index) => (
+            <View
+              key={index}
+              style={[styles.accessBadge, { backgroundColor: feature.color }]}
+            >
+              <Text style={styles.accessText}>{feature.name}</Text>
+            </View>
+          ))}
+        </View>
 
       {/* ABAS */}
       <View style={styles.tabContainer}>
