@@ -1,43 +1,59 @@
-import { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { router } from "expo-router";
 
 import { styles } from "./styles";
 import { Input } from "@/src/components/input";
 import { Button } from "@/src/components/button";
-import { Feather } from "@expo/vector-icons";
+import { AuthHeader } from "@/src/components/authHeader";
+import { theme } from "@/src/themes";
 
-export default function Index() {
+export default function EsqueceuSenha() {
   const [email, setEmail] = useState("");
-  const pages = useState("");;
 
-  function handleNext(pages: string){
-        router.navigate(`./${pages}`)
-    }
+  function handleNext(page: string) {
+    router.navigate(`./${page}`);
+  }
 
   return (
-    <View style={styles.container}>
-      {/* Tem que alinhar o card no centro da tela */}
-      <View style={styles.card}>
-        <Text style={styles.title}>Redefinir Senha</Text>
-        <Input
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          icon="mail"
-        />
-
-        <View style={styles.buttonRow}>
-          <Button
-            title="Continuar"
-            style={styles.buttonFilled}
-            
-            onPress={() => handleNext("esqueceuSenha/redefinir")}
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }} 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <ScrollView 
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          <AuthHeader 
+            title="Recuperar Conta" 
+            subtitle="Informe seu e-mail cadastrado" 
           />
-        </View>
-      </View>
+
+          <View style={styles.container}>
+            <View style={{ width: "85%", alignItems: "center" }}>
+              <Input
+                placeholder="E-mail"
+                value={email}
+                onChangeText={setEmail}
+                icon="mail"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <View style={styles.buttonRow}>
+                <Button
+                  title="Continuar"
+                  style={{ width: "100%" }} // Botão largura total
+                  onPress={() => handleNext("esqueceuSenha/redefinir")}
+                />
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
-
-
   );
 }
