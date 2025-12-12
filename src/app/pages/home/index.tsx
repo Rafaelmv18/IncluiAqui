@@ -1,29 +1,27 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { View, Text, StyleSheet,  FlatList, TouchableOpacity, Image, ActivityIndicator, SafeAreaView} from "react-native"
-import { router } from "expo-router"
-
-import { Menu } from "@/src/components/menu"
-import { PlaceCard } from "@/src/components/placeCard"
-import { useLocationCoordinates } from "@/src/hooks/useCurrentLocation";
-
-import { styles } from "./styles";
-import { Input } from "@/src/components/input"
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
+import { router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
-import {searchNearbyPlaces, getGooglePlacePhotoUrl} from "../../../core/api";
 
-// Interfaces para tipagem
+import { Menu } from "@/src/components/menu";
+import { PlaceCard } from "@/src/components/placeCard";
+import { Input } from "@/src/components/input";
+import { useLocationCoordinates } from "@/src/hooks/useCurrentLocation";
+import { searchNearbyPlaces } from "@/src/core/api";
+import { styles } from "./styles";
+import { theme } from "@/src/themes";
+
+// Definições de Tipos (Place, PlacePhoto, etc.)
+// ... (mantenha suas interfaces aqui como antes) ...
 interface PlacePhoto {
   photoReference: string;
   width: number;
   height: number;
 }
-
 interface PlaceLocation {
   lat: number;
   lng: number;
 }
-
 interface Place {
   placeId: string;
   name: string;
@@ -34,9 +32,10 @@ interface Place {
   types?: string[];
   priceLevel?: number;
   photos?: PlacePhoto[];
-  imageUrl?: string | null; // Aceitar null também
+  imageUrl?: string | null;
 }
 
+// Reduzi levemente a lista para focar nos principais para acessibilidade
 const categorias = [
   { nome: "Restaurantes", icon: "coffee" },
   { nome: "Salão", icon: "scissors" },
@@ -50,58 +49,40 @@ const categorias = [
   { nome: "Aeroportos", icon: "send" },     
 ];
 
-export default function Index() {
-  const [selectedButton, setSelectedButton] = useState<string | null>(null);
+export default function Home() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
   const [places, setPlaces] = useState<Place[]>([]);
   const [isLoadingPlaces, setIsLoadingPlaces] = useState(false);
   
-  const { 
-    latitude, 
-    longitude, 
-    isLoading: locationLoading, 
-    error: locationError,
-    refreshLocation,
-    accuracy,
-    isHighAccuracy,
-    distanceFromFallback,
-    lastUpdated
-  } = useLocationCoordinates();
+  const { latitude, longitude, isLoading: locationLoading } = useLocationCoordinates();
 
   function handleNext(page: string, params?: any) {
     if (params) {
-      router.push({
-        pathname: `./${page}`,
-        params: params
-      });
+      router.push({ pathname: `./${page}`, params: params });
     } else {
       router.push(`./${page}`);
     }
   }
 
-  function handleOnPress(item: String, value?: string) {
-   if (item === "search") {
-      setSearchText(value || "");
-    }
-  }
-
-  // Função para buscar estabelecimentos por categoria
   const searchByCategory = async (category: string) => {
-    setSelectedButton(category);
-    setIsLoadingPlaces(true);
+    const newCategory = selectedCategory === category ? null : category;
+    setSelectedCategory(newCategory);
     
+    if (!newCategory) {
+        setSearchText(""); 
+        return; 
+    }
+
+    setIsLoadingPlaces(true);
     try {
       const categoryKeywords: { [key: string]: string } = {
         "Restaurantes": "restaurant",
-        "Salão": "beauty_salon",
         "Supermercados": "supermarket",
-        "Parques": "park",
-        "Estações": "transit_station",
-        "Cinemas": "movie_theater",
-        "Hotéis": "lodging",
-        "Academias": "gym",
+        "Farmácias": "pharmacy",
         "Hospitais": "hospital",
-        "Aeroportos": "airport"
+        "Parques": "park",
+        "Transporte": "transit_station",
       };
 
       const response = await searchNearbyPlaces({ 
@@ -123,110 +104,105 @@ export default function Index() {
 
   useEffect(() => {
     const fetchPlaces = async () => {
-      // Não busca se ainda está carregando a localização
-      if (locationLoading) return;
-      
-      // Avisar se está usando localização imprecisa
-      if (accuracy && accuracy > 1000) {
-        console.warn(`⚠️ Localização imprecisa detectada: ${accuracy}m`);
-      }
-      
-      // Avisar se está usando coordenadas padrão
-      if (distanceFromFallback !== null && distanceFromFallback < 1) {
-        console.warn('⚠️ Usando coordenadas padrão de São Paulo');
-      }
+      if (locationLoading || selectedCategory) return;
       
       setIsLoadingPlaces(true);
-      
       try {
         const response = await searchNearbyPlaces({ 
           latitude,
           longitude,
-          radius: 5000, // 5km radius
+          radius: 5000, 
           keyword: searchText || "estabelecimento",
-          type: "establishment" // Default type
+          type: "establishment"
         });
-        
         setPlaces(response || []);
       } catch (error) {
         console.error("Error fetching places:", error);
-        setPlaces([]);
       } finally {
         setIsLoadingPlaces(false);
       }
     };
 
-    // Só busca se houver texto de busca ou se for a primeira carga
-    if (searchText || places.length === 0) {
-      fetchPlaces();
-    }
-  }, [searchText, latitude, longitude, locationLoading, accuracy, distanceFromFallback]);
+    const timeout = setTimeout(() => {
+        if (!selectedCategory) fetchPlaces();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [searchText, latitude, longitude, locationLoading, selectedCategory]);
   
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Conteúdo com rolagem */}
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.greeting}>Olá, bem-vindo(a)!</Text>
+        <Text style={styles.title}>Onde deseja ir?</Text>
+      </View>
+
       <FlatList
+        data={places}
+        keyExtractor={(item) => item.placeId}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <>
-
-
-            {/* Campo de busca */}
-            <Input
-              placeholder="Buscar local"
-              icon="map-pin"
-              inputStyle={styles.input}
-              iconStyle={styles.icon}
-              onChangeText={(value) => handleOnPress("search", value)}
-            />
-
-            {/* Grid de categorias */}
-            <View style={styles.grid}>
-              {categorias.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.categoryButton,
-                    selectedButton === item.nome && styles.categoryButtonSelected
-                  ]}
-                  onPress={() => searchByCategory(item.nome)}
-                >
-                  <Feather 
-                    name={item.icon as any} 
-                    size={20} 
-                    color={selectedButton === item.nome ? "#fff" : "#000"} 
-                  />
-                  <Text style={[
-                    styles.categoryText,
-                    selectedButton === item.nome && styles.categoryTextSelected
-                  ]}>
-                    {item.nome}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+            <View style={styles.searchContainer}>
+                <Input
+                    placeholder="Buscar local específico..."
+                    icon="search"
+                    inputStyle={styles.inputOverride}
+                    value={searchText}
+                    onChangeText={setSearchText}
+                />
             </View>
 
-            {/* Indicador de carregamento */}
+            <Text style={styles.sectionTitle}>Categorias</Text>
+
+            {/* GRID DE CATEGORIAS (Mais acessível e visível) */}
+            <View style={styles.categoriesGrid}>
+                {categorias.map((item) => (
+                    <TouchableOpacity
+                        key={item.nome}
+                        style={[
+                            styles.categoryButton,
+                            selectedCategory === item.nome && styles.categoryButtonSelected
+                        ]}
+                        activeOpacity={0.7}
+                        onPress={() => searchByCategory(item.nome)}
+                    >
+                        <Feather 
+                            name={item.icon as any} 
+                            size={24} // Ícone maior
+                            color={selectedCategory === item.nome ? "#fff" : theme.colors.primary} 
+                        />
+                        <Text style={[
+                            styles.categoryText,
+                            selectedCategory === item.nome && styles.categoryTextSelected
+                        ]}>
+                            {item.nome}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+
+            <Text style={styles.sectionTitle}>
+                {selectedCategory ? `Resultados: ${selectedCategory}` : "Locais Próximos"}
+            </Text>
+
             {isLoadingPlaces && (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#db6300" />
-                <Text style={styles.loadingText}>Buscando estabelecimentos...</Text>
+              <View style={styles.centerContainer}>
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <Text style={{ marginTop: 10, color: theme.colors.textSecondary }}>Buscando locais acessíveis...</Text>
               </View>
             )}
 
-            {/* Mensagem quando não há resultados */}
-            {!isLoadingPlaces && places.length === 0 && searchText && (
-              <View style={styles.emptyContainer}>
-                <Feather name="map-pin" size={48} color="#ccc" />
-                <Text style={styles.emptyText}>Nenhum estabelecimento encontrado</Text>
-                <Text style={styles.emptySubtext}>Tente uma busca diferente</Text>
+            {!isLoadingPlaces && places.length === 0 && (
+              <View style={styles.centerContainer}>
+                <Feather name="map-pin" size={48} color={theme.colors.textLight} />
+                <Text style={styles.emptyText}>Nenhum local encontrado</Text>
               </View>
             )}
           </>
         }
-        data={places}
-        keyExtractor={(item, index) => item.placeId || index.toString()}
-        contentContainerStyle={styles.lista}
         renderItem={({ item }) => (
           <PlaceCard
             place={item}
@@ -237,13 +213,11 @@ export default function Index() {
               placeName: item.name,
               placeData: JSON.stringify(item)
             })}
-            styles={styles}
           />
         )}
       />
 
-      {/* Menu fixo */}
       <Menu />
-    </SafeAreaView>
+    </View>
   );
 }

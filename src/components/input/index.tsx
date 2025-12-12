@@ -1,39 +1,56 @@
-import { SafeAreaView, TextInput, TextInputProps, View } from "react-native";
+import React, { useState } from "react";
+import { View, TextInput, TextInputProps, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
-
 import { styles } from "./styles";
-import React from "react";
+import { theme } from "@/src/themes";
 
 type Props = TextInputProps & {
-  // error: string
   icon?: keyof typeof Feather.glyphMap;
   inputStyle?: object; 
-  iconStyle?: object; 
+  iconStyle?: object;
+  isPassword?: boolean; 
 };
-// error = ''
-export function Input({ icon, inputStyle, iconStyle, ...rest }: Props) {
+
+export function Input({ icon, inputStyle, iconStyle, isPassword, ...rest }: Props) {
+  const [isFocused, setIsFocused] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(!isPassword);
+
   return (
-    <SafeAreaView>
-      <Feather  
-        name={icon}
-        size={24}
-        color="#666"
-        style={[styles.icon, iconStyle]}
-      />
+    <View 
+      style={[
+        styles.container, 
+        // Aqui ele usa o estilo que estava faltando antes
+        isFocused && styles.containerFocused,
+        inputStyle
+      ]}
+    >
+      {icon && (
+        <Feather  
+          name={icon}
+          size={20}
+          color={isFocused ? theme.colors.primary : theme.colors.textLight}
+          style={[styles.icon, iconStyle]}
+        />
+      )}
 
       <TextInput
-        style={[styles.input, inputStyle]}
-        placeholderTextColor="#666"
+        style={styles.input}
+        placeholderTextColor={theme.colors.textLight}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        secureTextEntry={isPassword && !isPasswordVisible}
         {...rest}
-        
       /> 
 
-      {/* {
-        error.length > 0 &&
-        <Text style={styles.error}>
-        {error}
-      </Text>
-      } */}
-    </SafeAreaView>
+      {isPassword && (
+        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+          <Feather 
+            name={isPasswordVisible ? "eye" : "eye-off"} 
+            size={20} 
+            color={theme.colors.textLight} 
+          />
+        </TouchableOpacity>
+      )}
+    </View>
   );
 }

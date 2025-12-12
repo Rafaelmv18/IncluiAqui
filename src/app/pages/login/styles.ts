@@ -1,73 +1,29 @@
 import { StyleSheet } from "react-native";
+import { theme } from "@/src/themes";
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
+        // Mudamos de 'center' para 'flex-start' para subir os inputs
+        justifyContent: "flex-start", 
         alignItems: "center",
-        backgroundColor: "#f2f2f2",
+        backgroundColor: theme.colors.background,
+        // Adicionamos um padding superior para não colar no Header
+        paddingTop: 32, 
+        paddingBottom: 40, // Espaço extra no final para scroll
     },
-    avatar:{
-        width: 80,
-        height: 80,
-        borderRadius: "50%",
-        backgroundColor: "#DB6300",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: 20,
-        elevation: 8,
-
-        // sombra iOS
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-    },
-    card: {
-        alignItems: "center",
-        width: 300,
-        padding: 24,
-        borderRadius: 15,
-        backgroundColor: "#fff", 
-        gap: 10,
-
-        // sombra iOS
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-
-        // sombra Android
-        elevation: 8,
-        
-    },
-    buttonRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        gap: 12, // ou paddingHorizontal
-    },
-
-    buttonFilled: {
-        flex: 1,
-        backgroundColor: "#DB6300",
-    },
-
-    buttonOutline: {
-        flex: 1,
-        backgroundColor: "#fff",
-        borderColor: "#DB6300",
-        borderWidth: 1,
-    },
-
-    titleOutline: {
-        color: "#DB6300",
-        fontWeight: "bold",
-    },
-
-   esqueceu: {
+    // ... Mantenha os outros estilos (esqueceu, esqueceuText, etc) iguais ao passo anterior ...
+    esqueceu: {
         width: "100%",
         alignItems: "flex-end",
-        textAlign: "right",
-    }
-
+        marginBottom: 24, // Aumentei um pouco o espaço antes dos botões
+    },
+    esqueceuText: {
+        color: theme.colors.textSecondary,
+        fontSize: theme.fonts.size.sm,
+    },
+    buttonRow: {
+        width: "100%",
+    },
+    // Caso tenha sobrado algum estilo antigo não utilizado, pode remover
 });

@@ -1,139 +1,108 @@
-import { StyleSheet } from "react-native";
-import { SearchBar } from "react-native-screens";
-import { Dimensions } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+import { theme } from "@/src/themes";
 
 const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        marginTop: 40,
+        backgroundColor: theme.colors.background,
     },
-    input:{
-        width: width * 0.9,
-        backgroundColor: "white",
-        alignItems: "center",
-        marginTop: 10,
+    // Header
+    header: {
+        paddingHorizontal: 20,
+        paddingTop: 60,
+        paddingBottom: 20,
+        backgroundColor: theme.colors.surface,
+        borderBottomWidth: 1,
+        borderBottomColor: "#F0F0F0",
     },
-    icon: {
-        color: "#000",
-        zIndex: 2,
-        top: 20
+    greeting: {
+        fontSize: theme.fonts.size.sm,
+        color: theme.colors.textSecondary,
     },
-    grid: {
-        width: width * 0.9,
+    title: {
+        fontSize: 22,
+        fontWeight: "bold",
+        color: theme.colors.textPrimary,
+        marginTop: 4,
+    },
+    
+    // Busca
+    searchContainer: {
+        paddingHorizontal: 20,
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    inputOverride: {
+        width: "100%",
+        backgroundColor: theme.colors.surface,
+        ...theme.shadows.soft,
+        borderWidth: 0,
+        height: 56, // Altura confortável
+    },
+
+    // --- NOVA ÁREA DE CATEGORIAS (GRID) ---
+    categoriesGrid: {
         flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        marginTop: 12,
+        flexWrap: "wrap", // Permite quebrar linha
+        justifyContent: "space-between", // Espalha os itens
+        paddingHorizontal: 20,
+        marginBottom: 20,
     },
     categoryButton: {
-        width: "30%",
-        aspectRatio: 1.5, // mantém altura proporcional
-        backgroundColor: "#f5a623",
-        marginBottom: 12,
-        borderRadius: 8,
+        width: "48%", // Quase metade da tela (2 colunas)
+        height: 70,   // Altura generosa para acessibilidade
+        backgroundColor: theme.colors.surface,
+        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start", // Alinha à esquerda para leitura
+        paddingHorizontal: 16,
+        marginBottom: 12, // Espaço vertical entre linhas
+        borderRadius: theme.borderRadius.md,
+        borderWidth: 1,
+        borderColor: "transparent", // Borda invisível por padrão
+        ...theme.shadows.soft, // Sombra suave
     },
     categoryButtonSelected: {
-        backgroundColor: "#db6300",
+        backgroundColor: theme.colors.primary,
+        borderColor: theme.colors.primary,
     },
     categoryText: {
-        marginTop: 4,
-        fontSize: 12,
-        color: "#000",
+        fontSize: 13, // Texto maior
+        fontWeight: "bold",
+        color: theme.colors.textPrimary,
+        marginLeft: 12, // Espaço entre ícone e texto
+        flex: 1, // Permite que o texto quebre linha se necessário
     },
     categoryTextSelected: {
-        color: "#fff",
+        color: theme.colors.textInverse,
     },
-    loadingContainer: {
-        paddingVertical: 30,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    loadingText: {
+    // --------------------------------------
+
+    sectionTitle: {
+        fontSize: 20, // Título da seção maior
+        fontWeight: "bold",
+        color: theme.colors.textPrimary,
+        marginHorizontal: 20,
         marginTop: 10,
-        fontSize: 14,
-        color: "#666",
+        marginBottom: 16,
     },
-    emptyContainer: {
-        paddingVertical: 40,
+
+    // Lista e Estados
+    listContent: {
+        paddingTop: 10,
+        paddingBottom: 100,
+    },
+    centerContainer: {
+        padding: 40,
         alignItems: "center",
         justifyContent: "center",
     },
     emptyText: {
         fontSize: 16,
-        color: "#666",
-        marginTop: 10,
+        color: theme.colors.textSecondary,
+        marginTop: 16,
         fontWeight: "bold",
-    },
-    emptySubtext: {
-        fontSize: 14,
-        color: "#999",
-        marginTop: 5,
-    },
-    lista: {
-        paddingBottom: 80,
-    },
-    card: {
-        flexDirection: "row",
-        backgroundColor: "#fff",
-        elevation: 2,
-        borderRadius: 10,
-        padding: 12,
-        marginVertical: 6,
-        alignItems: "center",
-    },
-    circle: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: "#db6300",
-        marginRight: 12,
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-    },
-    placeImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-    },
-    info: {
-        flex: 1,
-    },
-    title: {
-        fontWeight: "bold",
-        fontSize: 14,
-        marginBottom: 2,
-    },
-    address: {
-        fontSize: 12,
-        color: "#666",
-        marginBottom: 4,
-    },
-    ratingContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 2,
-    },
-    stars: {
-        flexDirection: "row",
-        marginRight: 8,
-    },
-    ratingText: {
-        fontSize: 12,
-        color: "#666",
-    },
-    desc: {
-        fontSize: 12,
-        color: "#666",
-    },
-    km: {
-        fontSize: 12,
-        color: "#333",
     },
 });

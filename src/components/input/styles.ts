@@ -1,29 +1,31 @@
 import { StyleSheet } from "react-native";
+import { theme } from "@/src/themes";
 
 export const styles = StyleSheet.create({
-    input: {
-        width: 266,
-        height: 48,
-        borderRadius: 30,
+    container: {
+        width: "100%",
+        height: 56,
+        borderRadius: theme.borderRadius.md,
         borderWidth: 1,
-        borderColor: '#121214',
-        padding: 10,
-        fontSize: 16,
-        color: '#333',
-        paddingLeft: 30,
-        paddingTop: 12,
+        borderColor: theme.colors.border,
+        backgroundColor: theme.colors.background,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 16,
+        marginBottom: 16,
+    },
+    containerFocused: {
+        borderColor: theme.colors.primary,
+        backgroundColor: theme.colors.surface,
+    },
+    input: {
+        flex: 1,
+        fontSize: theme.fonts.size.md,
+        color: theme.colors.textPrimary,
+        height: "100%",
+        marginLeft: 12,
     },
     icon: {
-        position: 'absolute', // Posiciona o ícone de forma absoluta dentro do container
-        left: 5, // Alinha o ícone à esquerda dentro do padding do container
-        top: 11,
-        color: '#E57A00'
-    },
-
-    // error: {
-    //     fontSize: 12,
-    //     color: "#DC1637",
-    //     marginLeft: 10,
-        
-    // }
-})
+        // Mantemos vazio ou adicionamos ajustes se necessário
+    }
+});

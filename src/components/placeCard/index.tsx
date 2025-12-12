@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { getGooglePlacePhotoUrl } from '@/src/core/api';
+import { styles } from './styles'; // Importando estilos próprios
+import { theme } from '@/src/themes';
 
+// Interfaces (mantidas)
 interface PlacePhoto {
   photoReference: string;
   width: number;
@@ -32,22 +35,20 @@ interface PlaceCardProps {
   userLatitude: number;
   userLongitude: number;
   onPress: () => void;
-  styles: any;
+  // Removemos a prop 'styles' daqui pois agora ele tem o seu próprio
 }
 
-export function PlaceCard({ place, userLatitude, userLongitude, onPress, styles }: PlaceCardProps) {
+export function PlaceCard({ place, userLatitude, userLongitude, onPress }: PlaceCardProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(place.imageUrl || null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Função para calcular distância usando a fórmula de Haversine
   function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): string {
-    const R = 6371; // Raio da Terra em km
+    const R = 6371; 
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = 
       Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     const distance = R * c;
     
@@ -57,16 +58,13 @@ export function PlaceCard({ place, userLatitude, userLongitude, onPress, styles 
     return `${distance.toFixed(1)}km`;
   }
 
-  // Carrega a imagem quando o componente é montado
   useEffect(() => {
     const loadImage = async () => {
-      if (!place.photos || place.photos.length === 0 || imageUrl) {
-        return;
-      }
-
+      if (!place.photos || place.photos.length === 0 || imageUrl) return;
       setIsLoadingImage(true);
       try {
-        const url = await getGooglePlacePhotoUrl(place.photos[0].photoReference, 100);
+        // Aumentei maxWidth para 400 para ter melhor qualidade no card grande
+        const url = await getGooglePlacePhotoUrl(place.photos[0].photoReference, 400);
         setImageUrl(url);
       } catch (error) {
         console.error('Erro ao carregar imagem:', error);
@@ -74,64 +72,55 @@ export function PlaceCard({ place, userLatitude, userLongitude, onPress, styles 
         setIsLoadingImage(false);
       }
     };
-
     loadImage();
   }, [place.photos, imageUrl]);
 
-  const distance = calculateDistance(
-    userLatitude, 
-    userLongitude, 
-    place.location.lat, 
-    place.location.lng
-  );
-
-  const stars = place.rating ? Math.round(place.rating) : 0;
+  const distance = calculateDistance(userLatitude, userLongitude, place.location.lat, place.location.lng);
+  const rating = place.rating || 0;
 
   return (
     <TouchableOpacity 
-      style={styles.card} 
-      activeOpacity={0.8} 
+      style={styles.container} 
+      activeOpacity={0.9} 
       onPress={onPress}
     >
-      <View style={styles.circle}>
+      {/* Imagem de Destaque (Cover) */}
+      <View style={styles.imageContainer}>
         {imageUrl ? (
           <Image 
             source={{ uri: imageUrl }}
             style={styles.placeImage}
-            defaultSource={{ uri: 'https://via.placeholder.com/50x50?text=?' }}
           />
-        ) : isLoadingImage ? (
-          <Feather name="loader" size={24} color="#fff" />
         ) : (
-          <Feather name="map-pin" size={24} color="#fff" />
+          <Feather name="map-pin" size={40} color={theme.colors.textLight} />
         )}
       </View>
-      <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={1}>
-          {place.name}
-        </Text>
-        <Text style={styles.address} numberOfLines={1}>
-          {place.address}
-        </Text>
-        <View style={styles.ratingContainer}>
-          <View style={styles.stars}>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Feather
-                key={i}
-                name="star"
-                size={16}
-                color={i < stars ? "#f5a623" : "#ccc"}
-              />
-            ))}
+
+      {/* Informações */}
+      <View style={styles.infoContainer}>
+        <View style={styles.headerRow}>
+          <Text style={styles.title} numberOfLines={1}>{place.name}</Text>
+          <View style={styles.distanceBadge}>
+            <Text style={styles.distanceText}>{distance}</Text>
           </View>
-          {place.rating && (
-            <Text style={styles.ratingText}>
-              {place.rating.toFixed(1)} ({place.userRatingsTotal || 0})
-            </Text>
-          )}
         </View>
-        <Text style={styles.desc}>Distância:</Text>
-        <Text style={styles.km}>{distance}</Text>
+
+        <Text style={styles.address} numberOfLines={2}>{place.address}</Text>
+
+        <View style={styles.footerRow}>
+          {/* Avaliação */}
+          <View style={styles.ratingContainer}>
+            <Feather name="star" size={14} color="#F5A623" />
+            <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
+            <Text style={styles.reviewsText}>({place.userRatingsTotal || 0})</Text>
+          </View>
+
+          {/* Badge Visual de Acessibilidade (Simulado por enquanto) */}
+          <View style={styles.accessBadge}>
+            <Feather name="check-circle" size={14} color={theme.colors.success} />
+            <Text style={styles.accessText}>Acessível</Text>
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   );
