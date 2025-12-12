@@ -1,24 +1,29 @@
 import { StyleSheet } from "react-native";
+import { theme } from "@/src/themes";
 
 export const styles = StyleSheet.create({
     menu:{
-        position: "absolute",     // fixa na tela
-        bottom: 0,                // encosta no rodapé
+        position: "absolute",
+        bottom: 0,
         width: "100%",
-        height: 80,
-        flexDirection: "row",     // alinha na horizontal
-        justifyContent: "space-around", // espaça entre eles
-        alignItems: "center",     // centraliza verticalmente
-        backgroundColor: "#fff",
+        height: 80, // Um pouco mais alto para acomodar safe area
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center",
+        backgroundColor: theme.colors.surface,
+
+        paddingBottom: 10, // Espaço extra para barra do iPhone
         
+        // Sombra para destacar do conteúdo (especialmente no mapa)
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: -3 }, // Sombra para cima
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 10,
     },
     menuButton:{
-        backgroundColor: "white",
-        width: 40,
-        height: 40,           // altura igual à largura para botão quadrado
-        borderRadius: 20,     // deixa arredondado (opcional)
+        // Seus estilos de botão (caso use View customizada)
         alignItems: "center",
         justifyContent: "center",
-        
     },
-})
+});
